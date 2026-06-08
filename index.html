@@ -688,6 +688,7 @@ phong 404  so nha 3 ngo 134/44/3 Nguyen Xa. Pham Tien Manh</textarea
     </div>
 
     <script>
+      // ===================== DANH SÁCH NGÂN HÀNG MỞ RỘNG (45+ ngân hàng) =====================
       const BANK_LIST = [
         { key: "MB", name: "MBBank (MB)", color: "#7B2FF7", short: "MB" },
         {
@@ -704,16 +705,109 @@ phong 404  so nha 3 ngo 134/44/3 Nguyen Xa. Pham Tien Manh</textarea
         },
         { key: "BIDV", name: "BIDV", color: "#005BAA", short: "BIDV" },
         {
-          key: "VTB",
+          key: "CTG",
           name: "Vietinbank (CTG)",
           color: "#B70000",
           short: "CTG",
         },
         { key: "ACB", name: "ACB", color: "#003087", short: "ACB" },
-        { key: "TPB", name: "TPBank", color: "#8B0000", short: "TPB" },
+        { key: "TPB", name: "TPBank (TPB)", color: "#8B0000", short: "TPB" },
         { key: "MSB", name: "MSB", color: "#E30613", short: "MSB" },
-        { key: "VPB", name: "VPBank", color: "#006F3C", short: "VPB" },
+        { key: "VPB", name: "VPBank (VPB)", color: "#006F3C", short: "VPB" },
         { key: "SHB", name: "SHB", color: "#B22222", short: "SHB" },
+        { key: "OCB", name: "OCB", color: "#F26B33", short: "OCB" },
+        { key: "VIB", name: "VIB", color: "#E51C23", short: "VIB" },
+        { key: "HDB", name: "HDBank (HDB)", color: "#0088CC", short: "HDB" },
+        { key: "SCB", name: "SCB", color: "#DA251D", short: "SCB" },
+        { key: "NCB", name: "NCB", color: "#F15A24", short: "NCB" },
+        { key: "ABB", name: "ABBank", color: "#E6007E", short: "ABB" },
+        { key: "VBB", name: "VietBank", color: "#0066CC", short: "VB" },
+        {
+          key: "SGB",
+          name: "Saigon Bank (SGB)",
+          color: "#005A9C",
+          short: "SGB",
+        },
+        { key: "PVCB", name: "PVcomBank", color: "#E3131B", short: "PV" },
+        {
+          key: "LDB",
+          name: "LienVietPostBank (LPB)",
+          color: "#006B3F",
+          short: "LPB",
+        },
+        { key: "NAB", name: "NamABank", color: "#003366", short: "NAB" },
+        { key: "KBank", name: "KienLong Bank", color: "#1E3A8A", short: "KLB" },
+        { key: "BAB", name: "BacABank", color: "#005B96", short: "BAB" },
+        {
+          key: "SGBV",
+          name: "Saigonbank (SGB)",
+          color: "#FDB913",
+          short: "SGB",
+        },
+        { key: "GPBank", name: "GPBank", color: "#E60023", short: "GP" },
+        { key: "OceanBank", name: "OceanBank", color: "#1A5276", short: "OGB" },
+        { key: "CBB", name: "CBBank", color: "#F26522", short: "CBB" },
+        {
+          key: "DongABank",
+          name: "DongABank (DAB)",
+          color: "#00467F",
+          short: "DAB",
+        },
+        { key: "VietABank", name: "VietABank", color: "#D0021B", short: "VAB" },
+        {
+          key: "SeABank",
+          name: "SeABank (SEA)",
+          color: "#004B87",
+          short: "SEA",
+        },
+        {
+          key: "SHINHAN",
+          name: "Shinhan Bank",
+          color: "#003E7E",
+          short: "SHIN",
+        },
+        { key: "HSBC", name: "HSBC", color: "#D32F2F", short: "HSBC" },
+        { key: "CIMB", name: "CIMB Bank", color: "#01796F", short: "CIMB" },
+        { key: "Woori", name: "Woori Bank", color: "#003E7E", short: "WOORI" },
+        {
+          key: "KEBHana",
+          name: "KEB Hana Bank",
+          color: "#0088D4",
+          short: "KEB",
+        },
+        {
+          key: "StandardChartered",
+          name: "Standard Chartered",
+          color: "#0E5A8A",
+          short: "SC",
+        },
+        { key: "Citibank", name: "Citibank", color: "#003F6F", short: "CITI" },
+        { key: "UOB", name: "UOB", color: "#D32F2F", short: "UOB" },
+        { key: "MayBank", name: "MayBank", color: "#E31E24", short: "MAY" },
+        {
+          key: "PublicBank",
+          name: "Public Bank (Vietnam)",
+          color: "#003366",
+          short: "PBB",
+        },
+        {
+          key: "HongLeong",
+          name: "Hong Leong Bank",
+          color: "#E31B23",
+          short: "HLB",
+        },
+        {
+          key: "Indovina",
+          name: "Indovina Bank (IVB)",
+          color: "#E31937",
+          short: "IVB",
+        },
+        {
+          key: "VRB",
+          name: "VRB (Vietnam - Russia)",
+          color: "#C00E2D",
+          short: "VRB",
+        },
       ];
 
       let customLogoDataUrl = null;
