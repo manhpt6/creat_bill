@@ -3,11 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tạo Bill Chuyển Tiền</title>
-    <link
+    <title>Tạo Bill Chuyển Tiền | Lưu ảnh đẹp</title>
+    <!-- <link
       href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
+    /> -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
       *,
       *::before,
@@ -26,7 +31,12 @@
       }
 
       body {
-        font-family: "Be Vietnam Pro", sans-serif;
+        /* font-family: "Be Vietnam Pro", sans-serif; */
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
         background: linear-gradient(
           135deg,
           #e8eeff 0%,
@@ -42,7 +52,6 @@
         flex-wrap: wrap;
       }
 
-      /* ===== FORM PANEL ===== */
       .form-panel {
         background: white;
         border-radius: 24px;
@@ -50,6 +59,8 @@
         width: 400px;
         box-shadow: 0 8px 40px rgba(26, 86, 219, 0.12);
         flex-shrink: 0;
+        position: relative;
+        z-index: 1;
       }
       .form-panel h2 {
         font-size: 22px;
@@ -114,7 +125,6 @@
         flex: 1;
       }
 
-      /* ===== EDITABLE SELECT (combo) ===== */
       .combo-wrap {
         position: relative;
       }
@@ -140,8 +150,8 @@
         border: 1.5px solid var(--border);
         border-radius: 12px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        z-index: 100;
-        max-height: 200px;
+        z-index: 9999;
+        max-height: 250px;
         overflow-y: auto;
       }
       .combo-wrap .combo-dropdown.open {
@@ -164,7 +174,6 @@
         font-weight: 700;
       }
 
-      /* ===== BUTTONS ===== */
       .btn-generate {
         width: 100%;
         padding: 14px;
@@ -189,7 +198,6 @@
         transform: scale(0.98);
       }
 
-      /* ===== PREVIEW ===== */
       .preview-wrap {
         display: flex;
         flex-direction: column;
@@ -209,6 +217,7 @@
         border-radius: 20px;
         overflow: hidden;
         box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+        background: #fff;
       }
       .phone-screen {
         width: 100%;
@@ -220,7 +229,6 @@
         );
       }
 
-      /* ===== BILL CONTENT ===== */
       .bill-inner {
         padding: 20px 20px 30px;
         display: flex;
@@ -240,14 +248,14 @@
 
       .bill-title {
         font-size: 17px;
-        font-weight: 700;
+        font-weight: 500;
         color: #1a1a2e;
         margin-bottom: 6px;
         text-align: center;
       }
       .bill-amount {
         font-size: 28px;
-        font-weight: 800;
+        font-weight: 600;
         color: var(--blue);
         margin-bottom: 6px;
         text-align: center;
@@ -277,8 +285,8 @@
         margin-bottom: 4px;
       }
       .recipient-name {
-        font-size: 15px;
-        font-weight: 800;
+        font-size: 18px;
+        font-weight: 600;
         color: #1a1a2e;
         margin-bottom: 10px;
         text-transform: uppercase;
@@ -304,19 +312,21 @@
         flex-shrink: 0;
       }
       .bank-name-text {
-        font-size: 13px;
-        font-weight: 600;
+        font-size: 14px;
+        font-weight: 400;
         color: var(--text);
       }
       .account-no {
         font-size: 13px;
-        color: var(--muted);
+        /* color: var(--muted); */
+        color: #1a1a2e;
         font-weight: 500;
         margin-bottom: 4px;
       }
       .bill-content-text {
         font-size: 12px;
-        color: #888;
+        /* color: #888; */
+        color: #1a1a2e;
         margin-top: 4px;
       }
 
@@ -394,9 +404,12 @@
         text-align: center;
         letter-spacing: 0.01em;
         cursor: pointer;
+        transition: background 0.2s;
+      }
+      .btn-other:hover {
+        background: var(--blue-dark);
       }
 
-      /* logo upload */
       .upload-logo-wrap {
         cursor: pointer;
       }
@@ -428,7 +441,6 @@
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
       }
 
-      /* save button */
       .btn-save {
         padding: 11px 28px;
         background: transparent;
@@ -446,7 +458,6 @@
         color: white;
       }
 
-      /* ===== SCREEN STATES ===== */
       .screen-form,
       .screen-bill {
         width: 100%;
@@ -454,10 +465,27 @@
       .screen-bill {
         display: none;
       }
+
+      .capture-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-family: "Be Vietnam Pro", sans-serif;
+        font-weight: 600;
+        color: white;
+        font-size: 18px;
+        backdrop-filter: blur(4px);
+      }
     </style>
   </head>
   <body>
-    <!-- FORM -->
     <div class="form-panel">
       <h2>🧾 Tạo Bill Chuyển Tiền</h2>
       <p>Nhập thông tin để tạo bill troll bạn bè 😈</p>
@@ -504,19 +532,17 @@
               id="inp-bank-from"
               value="MBBank (MB)"
               autocomplete="off"
-              placeholder="Tìm hoặc nhập..."
             />
-            <span class="combo-arrow">
-              <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+            <span class="combo-arrow"
+              ><svg width="12" height="7" viewBox="0 0 12 7" fill="none">
                 <path
                   d="M1 1L6 6L11 1"
                   stroke="#6b7280"
                   stroke-width="1.5"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                />
-              </svg>
-            </span>
+                /></svg
+            ></span>
             <div class="combo-dropdown" id="dd-bank-from"></div>
           </div>
         </div>
@@ -528,19 +554,17 @@
               id="inp-bank-to"
               value="Vietinbank (CTG)"
               autocomplete="off"
-              placeholder="Tìm hoặc nhập..."
             />
-            <span class="combo-arrow">
-              <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+            <span class="combo-arrow"
+              ><svg width="12" height="7" viewBox="0 0 12 7" fill="none">
                 <path
                   d="M1 1L6 6L11 1"
                   stroke="#6b7280"
                   stroke-width="1.5"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                />
-              </svg>
-            </span>
+                /></svg
+            ></span>
             <div class="combo-dropdown" id="dd-bank-to"></div>
           </div>
         </div>
@@ -560,8 +584,6 @@
               fill="none"
               stroke="#1A56DB"
               stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
             >
               <rect x="3" y="3" width="18" height="18" rx="3" />
               <circle cx="8.5" cy="8.5" r="1.5" />
@@ -587,7 +609,6 @@
               background: none;
               border: none;
               cursor: pointer;
-              font-family: inherit;
               font-weight: 600;
             "
           >
@@ -628,12 +649,10 @@ phong 404  so nha 3 ngo 134/44/3 Nguyen Xa. Pham Tien Manh</textarea
       </button>
     </div>
 
-    <!-- PREVIEW -->
     <div class="preview-wrap">
       <div class="preview-label">🧾 Preview Bill</div>
-      <div class="phone-frame">
+      <div class="phone-frame" id="phoneFrame">
         <div class="phone-screen" id="bill-screen">
-          <!-- form state shown first -->
           <div class="screen-form" id="screen-form">
             <div
               style="
@@ -680,15 +699,15 @@ phong 404  so nha 3 ngo 134/44/3 Nguyen Xa. Pham Tien Manh</textarea
               </div>
             </div>
           </div>
-          <!-- bill result hidden initially -->
           <div class="screen-bill" id="screen-bill"></div>
         </div>
       </div>
-      <button class="btn-save" onclick="saveBill()">💾 Lưu ảnh bill</button>
+      <button class="btn-save" id="saveImageBtn">
+        📸 Lưu ảnh bill (tải về)
+      </button>
     </div>
 
     <script>
-      // ===================== DANH SÁCH NGÂN HÀNG MỞ RỘNG (45+ ngân hàng) =====================
       const BANK_LIST = [
         { key: "MB", name: "MBBank (MB)", color: "#7B2FF7", short: "MB" },
         {
@@ -738,12 +757,6 @@ phong 404  so nha 3 ngo 134/44/3 Nguyen Xa. Pham Tien Manh</textarea
         { key: "NAB", name: "NamABank", color: "#003366", short: "NAB" },
         { key: "KBank", name: "KienLong Bank", color: "#1E3A8A", short: "KLB" },
         { key: "BAB", name: "BacABank", color: "#005B96", short: "BAB" },
-        {
-          key: "SGBV",
-          name: "Saigonbank (SGB)",
-          color: "#FDB913",
-          short: "SGB",
-        },
         { key: "GPBank", name: "GPBank", color: "#E60023", short: "GP" },
         { key: "OceanBank", name: "OceanBank", color: "#1A5276", short: "OGB" },
         { key: "CBB", name: "CBBank", color: "#F26522", short: "CBB" },
@@ -812,52 +825,77 @@ phong 404  so nha 3 ngo 134/44/3 Nguyen Xa. Pham Tien Manh</textarea
 
       let customLogoDataUrl = null;
 
-      // ===== COMBO BOX SETUP =====
+      // Hàm khởi tạo combo box đã sửa lỗi
       function setupCombo(inputId, dropdownId) {
         const input = document.getElementById(inputId);
         const dd = document.getElementById(dropdownId);
+
+        if (!input || !dd) return;
 
         function renderOptions(filter) {
           const lower = filter.toLowerCase();
           const filtered = BANK_LIST.filter((b) =>
             b.name.toLowerCase().includes(lower),
           );
-          dd.innerHTML = filtered
-            .map(
-              (b) =>
-                `<div class="combo-option" data-name="${b.name}" onclick="selectCombo('${inputId}','${dropdownId}','${b.name}')">${b.name}</div>`,
-            )
-            .join("");
+
+          if (filtered.length === 0) {
+            dd.innerHTML = `<div class="combo-option" style="color:#999; cursor:default;">Không tìm thấy ngân hàng</div>`;
+          } else {
+            dd.innerHTML = filtered
+              .map(
+                (b) =>
+                  `<div class="combo-option" data-value="${b.name}" onclick="selectCombo('${inputId}','${dropdownId}','${b.name}')">${b.name}</div>`,
+              )
+              .join("");
+          }
         }
 
-        input.addEventListener("focus", () => {
+        // Xử lý sự kiện focus
+        input.addEventListener("focus", function (e) {
+          e.stopPropagation();
           renderOptions(input.value);
           dd.classList.add("open");
         });
 
-        input.addEventListener("input", () => {
+        // Xử lý sự kiện gõ
+        input.addEventListener("input", function () {
           renderOptions(input.value);
           dd.classList.add("open");
         });
 
-        document.addEventListener("click", (e) => {
-          if (!input.parentElement.contains(e.target))
+        // Xử lý click vào input
+        input.addEventListener("click", function (e) {
+          e.stopPropagation();
+          renderOptions(input.value);
+          dd.classList.add("open");
+        });
+
+        // Đóng dropdown khi click ra ngoài
+        document.body.addEventListener("click", function (e) {
+          if (!input.parentElement.contains(e.target)) {
             dd.classList.remove("open");
+          }
         });
 
+        // Render danh sách ban đầu (ẩn)
         renderOptions("");
       }
 
       function selectCombo(inputId, dropdownId, name) {
         document.getElementById(inputId).value = name;
         document.getElementById(dropdownId).classList.remove("open");
+        // Kích hoạt sự kiện change để cập nhật nếu cần
+        const event = new Event("change", { bubbles: true });
+        document.getElementById(inputId).dispatchEvent(event);
       }
 
-      setupCombo("inp-bank-from", "dd-bank-from");
-      setupCombo("inp-bank-to", "dd-bank-to");
+      // Khởi tạo combo khi trang load xong
+      document.addEventListener("DOMContentLoaded", function () {
+        setupCombo("inp-bank-from", "dd-bank-from");
+        setupCombo("inp-bank-to", "dd-bank-to");
+      });
 
-      // ===== LOGO UPLOAD =====
-      function handleLogoUpload(event) {
+      window.handleLogoUpload = function (event) {
         const file = event.target.files[0];
         if (!file) return;
         const reader = new FileReader();
@@ -868,24 +906,78 @@ phong 404  so nha 3 ngo 134/44/3 Nguyen Xa. Pham Tien Manh</textarea
           document.getElementById("logo-clear-wrap").style.display = "block";
         };
         reader.readAsDataURL(file);
-      }
+      };
 
-      function clearLogo() {
+      window.clearLogo = function () {
         customLogoDataUrl = null;
         document.getElementById("inp-logo").value = "";
         const box = document.getElementById("logo-preview-box");
-        box.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A56DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span id="logo-upload-text">Nhấn để tải logo ngân hàng</span>`;
+        box.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A56DB" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span id="logo-upload-text">Nhấn để tải logo ngân hàng</span>`;
         document.getElementById("logo-clear-wrap").style.display = "none";
-      }
+      };
 
       function formatAmount(val) {
-        let num = val.replace(/[^\d]/g, "");
+        let trimmed = val.trim();
+        if (trimmed === "") return "0";
+
+        // Kiểm tra nếu đã có định dạng sẵn (có dấu chấm hoặc phẩy)
+        if (
+          (trimmed.includes(".") || trimmed.includes(",")) &&
+          trimmed.match(/[\d]/g).length > 3
+        ) {
+          return trimmed;
+        }
+
+        // Xóa ký tự đặc biệt và định dạng lại
+        let num = trimmed.replace(/[^\d]/g, "");
         if (!num) return "0";
         return parseInt(num).toLocaleString("vi-VN");
       }
 
-      // ===== GENERATE BILL =====
-      function generate() {
+      window.captureAndDownloadBill = async function () {
+        const billScreenDiv = document.getElementById("screen-bill");
+        if (!billScreenDiv || billScreenDiv.style.display !== "block") {
+          alert(
+            "⚠️ Chưa có bill nào được tạo! Hãy nhấn '⚡ Tạo Bill Ngay' trước.",
+          );
+          return;
+        }
+        const billElement = billScreenDiv.querySelector(".bill-inner");
+        if (!billElement) return;
+
+        const loader = document.createElement("div");
+        loader.className = "capture-loading";
+        loader.innerHTML =
+          '<div style="background:#000000aa; padding: 12px 24px; border-radius: 60px;">📸 Đang xử lý ảnh bill ...</div>';
+        document.body.appendChild(loader);
+
+        try {
+          await new Promise((r) => setTimeout(r, 100));
+          const canvas = await html2canvas(billElement, {
+            scale: 3,
+            backgroundColor: null,
+            useCORS: true,
+            logging: false,
+            allowTaint: false,
+          });
+          const imageData = canvas.toDataURL("image/png");
+          const link = document.createElement("a");
+          const timestamp = new Date()
+            .toISOString()
+            .slice(0, 19)
+            .replace(/:/g, "-");
+          link.download = `MBBank_bill_${timestamp}.png`;
+          link.href = imageData;
+          link.click();
+        } catch (err) {
+          console.error(err);
+          alert("Có lỗi khi chụp ảnh: " + err.message);
+        } finally {
+          document.body.removeChild(loader);
+        }
+      };
+
+      window.generate = function () {
         const time = document.getElementById("inp-time").value || "09:06";
         const date = document.getElementById("inp-date").value || "31/05/2026";
         const amount = formatAmount(
@@ -901,7 +993,6 @@ phong 404  so nha 3 ngo 134/44/3 Nguyen Xa. Pham Tien Manh</textarea
           document.getElementById("inp-account").value || "000000000000";
         const content = document.getElementById("inp-content").value || "";
 
-        // Match bank to get color/short — fallback to grey
         const matched = BANK_LIST.find(
           (b) => b.name.toLowerCase() === bankToName.toLowerCase(),
         );
@@ -915,89 +1006,47 @@ phong 404  so nha 3 ngo 134/44/3 Nguyen Xa. Pham Tien Manh</textarea
           : `<div class="bank-logo-sm" style="background:${bankColor}">${bankShort}</div>`;
 
         const billHtml = `
-    <div style="background:linear-gradient(160deg,#dde6ff 0%,#eef2ff 40%,#f0f8ff 100%);min-height:100%;padding-bottom:10px;">
-      <div class="bill-inner">
-        <div class="checkmark-wrap">
-          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="ckGrad" x1="10" y1="20" x2="65" y2="65" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#48CAE4"/><stop offset="1" stop-color="#1A56DB"/>
-              </linearGradient>
-            </defs>
-            <path d="M12 42 L33 63 L68 22" stroke="url(#ckGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-
-        <div class="bill-title">Chuyển tiền thành công</div>
-        <div class="bill-amount">${amount} VND</div>
-        <div class="bill-time">${time} - ${date}</div>
-        <div class="chevron-down">
-          <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><path d="M1 1L9 9L17 1" stroke="#1A56DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><path d="M1 1L9 9L17 1" stroke="#1A56DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/></svg>
-        </div>
-
-        <div class="recipient-card">
-          <div class="recipient-name">${receiver}</div>
-          <div class="bank-row">
-            ${bankLogoHtml}
-            <span class="bank-name-text">${bankToName}</span>
-          </div>
-          <div class="account-no">${account}</div>
-          ${content ? `<div class="bill-content-text">${content}</div>` : ""}
-        </div>
-
-        <div class="expand-btn">
-          <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-
-        <div class="thankyou-text">Cảm ơn bạn đã sử dụng dịch vụ của MBBank</div>
-
-        <div class="mb-logo">
-          <img src="Logo-MB-Bank-MBB.webp" style="height:36px;width:auto;object-fit:contain;">
-        </div>
-
-        <div class="action-row">
-          <div class="action-item">
-            <div class="action-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <div class="bill-inner" style="background: linear-gradient(160deg, #dde6ff 0%, #eef2ff 40%, #f0f8ff 100%); border-radius: 0;">
+            <div class="checkmark-wrap">
+              <svg viewBox="0 0 80 80" fill="none">
+                <defs><linearGradient id="ckGrad" x1="10" y1="20" x2="65" y2="65" gradientUnits="userSpaceOnUse"><stop stop-color="#48CAE4"/><stop offset="1" stop-color="#1A56DB"/></linearGradient></defs>
+                <path d="M12 42 L33 63 L68 22" stroke="url(#ckGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </div>
-            <span class="action-label">Chia sẻ</span>
-          </div>
-          <div class="action-item">
-            <div class="action-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <div class="bill-title">Chuyển tiền thành công</div>
+            <div class="bill-amount">${amount} VND</div>
+            <div class="bill-time">${time} - ${date}</div>
+            <div class="chevron-down"><svg width="18" height="10" viewBox="0 0 18 10" fill="none"><path d="M1 1L9 9L17 1" stroke="#1A56DB" stroke-width="2" stroke-linecap="round"/></svg><svg width="18" height="10" viewBox="0 0 18 10" fill="none"><path d="M1 1L9 9L17 1" stroke="#1A56DB" stroke-width="2" stroke-linecap="round" opacity="0.4"/></svg></div>
+            <div class="recipient-card">
+              <div class="recipient-name">${receiver}</div>
+              <div class="bank-row">${bankLogoHtml}<span class="bank-name-text">${bankToName}</span></div>
+              <div class="account-no">${account}</div>
+              ${content ? `<div class="bill-content-text">${content}</div>` : ""}
             </div>
-            <span class="action-label">Lưu ảnh</span>
-          </div>
-          <div class="action-item">
-            <div class="action-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <div class="expand-btn"><svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="#888" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+            <div class="thankyou-text">Cảm ơn bạn đã sử dụng dịch vụ của MBBank</div>
+            <div class="mb-logo"><img src="Logo-MB-Bank-MBB.webp" style="height:36px;width:auto;object-fit:contain;" crossorigin="anonymous" alt="MB Bank"></div>
+            <div class="action-row">
+              <div class="action-item"><div class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div><span class="action-label">Chia sẻ</span></div>
+              <div class="action-item"><div class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div><span class="action-label">Lưu ảnh</span></div>
+              <div class="action-item"><div class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><span class="action-label">Lưu mẫu</span></div>
             </div>
-            <span class="action-label">Lưu mẫu</span>
+            <div class="btn-other" onclick="goBack()">Thực hiện giao dịch khác</div>
           </div>
-        </div>
-
-        <div class="btn-other" onclick="goBack()">Thực hiện giao dịch khác</div>
-      </div>
-    </div>
-  `;
-
-        // Switch screens
+        `;
         document.getElementById("screen-form").style.display = "none";
         document.getElementById("screen-bill").style.display = "block";
         document.getElementById("screen-bill").innerHTML = billHtml;
-      }
+      };
 
-      function goBack() {
+      window.goBack = function () {
         document.getElementById("screen-bill").style.display = "none";
         document.getElementById("screen-form").style.display = "block";
-      }
+      };
 
-      function saveBill() {
-        alert(
-          "💡 Tip: Dùng Snipping Tool (Windows) hoặc Cmd+Shift+4 (Mac) để chụp bill nhé!",
-        );
-      }
+      document
+        .getElementById("saveImageBtn")
+        .addEventListener("click", window.captureAndDownloadBill);
     </script>
   </body>
 </html>
