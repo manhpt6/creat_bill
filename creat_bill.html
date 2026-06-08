@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tạo Bill Chuyển Tiền</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --blue: #1a56db;
+        --blue-dark: #1341b0;
+        --text: #1a1a2e;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+      }
+
+      body {
+        font-family: "Be Vietnam Pro", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #e8eeff 0%,
+          #f5f0ff 50%,
+          #e8f4ff 100%
+        );
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 40px;
+        padding: 40px 20px;
+        flex-wrap: wrap;
+      }
+
+      /* ===== FORM PANEL ===== */
+      .form-panel {
+        background: white;
+        border-radius: 24px;
+        padding: 32px;
+        width: 400px;
+        box-shadow: 0 8px 40px rgba(26, 86, 219, 0.12);
+        flex-shrink: 0;
+      }
+      .form-panel h2 {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 6px;
+      }
+      .form-panel p {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 28px;
+      }
+
+      .form-group {
+        margin-bottom: 18px;
+      }
+
+      label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        margin-bottom: 7px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        font-family: "Be Vietnam Pro", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        background: #fafbff;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+        background: white;
+      }
+      textarea {
+        resize: none;
+        height: 68px;
+      }
+
+      .row {
+        display: flex;
+        gap: 12px;
+      }
+      .row .form-group {
+        flex: 1;
+      }
+
+      /* ===== EDITABLE SELECT (combo) ===== */
+      .combo-wrap {
+        position: relative;
+      }
+      .combo-wrap input {
+        padding-right: 36px;
+        cursor: text;
+      }
+      .combo-wrap .combo-arrow {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: var(--muted);
+      }
+      .combo-wrap .combo-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        z-index: 100;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .combo-wrap .combo-dropdown.open {
+        display: block;
+      }
+      .combo-wrap .combo-option {
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        color: var(--text);
+        transition: background 0.15s;
+      }
+      .combo-wrap .combo-option:hover {
+        background: #f0f5ff;
+      }
+      .combo-wrap .combo-option.selected {
+        background: #e8f0fe;
+        color: var(--blue);
+        font-weight: 700;
+      }
+
+      /* ===== BUTTONS ===== */
+      .btn-generate {
+        width: 100%;
+        padding: 14px;
+        background: var(--blue);
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-family: "Be Vietnam Pro", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 8px;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+        letter-spacing: 0.02em;
+      }
+      .btn-generate:hover {
+        background: var(--blue-dark);
+      }
+      .btn-generate:active {
+        transform: scale(0.98);
+      }
+
+      /* ===== PREVIEW ===== */
+      .preview-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+      .preview-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .phone-frame {
+        width: 340px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+      }
+      .phone-screen {
+        width: 100%;
+        background: linear-gradient(
+          160deg,
+          #dde6ff 0%,
+          #eef2ff 40%,
+          #f0f8ff 100%
+        );
+      }
+
+      /* ===== BILL CONTENT ===== */
+      .bill-inner {
+        padding: 20px 20px 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .checkmark-wrap {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 16px;
+      }
+      .checkmark-wrap svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .bill-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 6px;
+        text-align: center;
+      }
+      .bill-amount {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--blue);
+        margin-bottom: 6px;
+        text-align: center;
+        letter-spacing: -0.5px;
+      }
+      .bill-time {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+
+      .chevron-down {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1px;
+        margin-bottom: 14px;
+      }
+
+      .recipient-card {
+        width: 100%;
+        background: white;
+        border-radius: 18px;
+        padding: 16px 18px;
+        text-align: center;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+        margin-bottom: 4px;
+      }
+      .recipient-name {
+        font-size: 15px;
+        font-weight: 800;
+        color: #1a1a2e;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+      }
+      .bank-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      .bank-logo-sm {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        font-weight: 800;
+        color: white;
+        flex-shrink: 0;
+      }
+      .bank-name-text {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .account-no {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+      .bill-content-text {
+        font-size: 12px;
+        color: #888;
+        margin-top: 4px;
+      }
+
+      .expand-btn {
+        width: 32px;
+        height: 32px;
+        background: #eef0f6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        margin-top: -14px;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .thankyou-text {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 18px;
+        margin-bottom: 6px;
+        text-align: center;
+      }
+
+      .mb-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 22px;
+      }
+
+      .action-row {
+        display: flex;
+        gap: 28px;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+      .action-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+      .action-icon {
+        width: 50px;
+        height: 50px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        color: var(--blue);
+      }
+      .action-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+      .action-label {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .btn-other {
+        width: 100%;
+        padding: 16px;
+        background: var(--blue);
+        color: white;
+        border-radius: 16px;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 0.01em;
+        cursor: pointer;
+      }
+
+      /* logo upload */
+      .upload-logo-wrap {
+        cursor: pointer;
+      }
+      .upload-logo-preview {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border: 1.5px dashed var(--blue);
+        border-radius: 12px;
+        background: #f0f5ff;
+        transition: background 0.2s;
+        min-height: 46px;
+      }
+      .upload-logo-wrap:hover .upload-logo-preview {
+        background: #e4edff;
+      }
+      #logo-upload-text {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--blue);
+      }
+      #logo-preview-img {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid white;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+      }
+
+      /* save button */
+      .btn-save {
+        padding: 11px 28px;
+        background: transparent;
+        color: var(--blue);
+        border: 2px solid var(--blue);
+        border-radius: 12px;
+        font-family: "Be Vietnam Pro", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-save:hover {
+        background: var(--blue);
+        color: white;
+      }
+
+      /* ===== SCREEN STATES ===== */
+      .screen-form,
+      .screen-bill {
+        width: 100%;
+      }
+      .screen-bill {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- FORM -->
+    <div class="form-panel">
+      <h2>🧾 Tạo Bill Chuyển Tiền</h2>
+      <p>Nhập thông tin để tạo bill troll bạn bè 😈</p>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Giờ giao dịch</label>
+          <input
+            type="text"
+            id="inp-time"
+            placeholder="09:06"
+            value="09:06"
+            maxlength="5"
+          />
+        </div>
+        <div class="form-group">
+          <label>Ngày giao dịch</label>
+          <input
+            type="text"
+            id="inp-date"
+            placeholder="31/05/2026"
+            value="31/05/2026"
+            maxlength="10"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Số tiền (VND)</label>
+        <input
+          type="text"
+          id="inp-amount"
+          placeholder="3,071,000"
+          value="3,071,000"
+        />
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Ngân hàng gửi</label>
+          <div class="combo-wrap" id="combo-from-wrap">
+            <input
+              type="text"
+              id="inp-bank-from"
+              value="MBBank (MB)"
+              autocomplete="off"
+              placeholder="Tìm hoặc nhập..."
+            />
+            <span class="combo-arrow">
+              <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+                <path
+                  d="M1 1L6 6L11 1"
+                  stroke="#6b7280"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <div class="combo-dropdown" id="dd-bank-from"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Ngân hàng nhận</label>
+          <div class="combo-wrap" id="combo-to-wrap">
+            <input
+              type="text"
+              id="inp-bank-to"
+              value="Vietinbank (CTG)"
+              autocomplete="off"
+              placeholder="Tìm hoặc nhập..."
+            />
+            <span class="combo-arrow">
+              <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+                <path
+                  d="M1 1L6 6L11 1"
+                  stroke="#6b7280"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <div class="combo-dropdown" id="dd-bank-to"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Logo ngân hàng nhận (tuỳ chọn)</label>
+        <div
+          class="upload-logo-wrap"
+          onclick="document.getElementById('inp-logo').click()"
+        >
+          <div class="upload-logo-preview" id="logo-preview-box">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1A56DB"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="3" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <span id="logo-upload-text">Nhấn để tải logo ngân hàng</span>
+          </div>
+          <input
+            type="file"
+            id="inp-logo"
+            accept="image/*"
+            style="display: none"
+            onchange="handleLogoUpload(event)"
+          />
+        </div>
+        <div id="logo-clear-wrap" style="display: none; margin-top: 6px">
+          <button
+            type="button"
+            onclick="clearLogo()"
+            style="
+              font-size: 12px;
+              color: #e63946;
+              background: none;
+              border: none;
+              cursor: pointer;
+              font-family: inherit;
+              font-weight: 600;
+            "
+          >
+            ✕ Xoá logo, dùng màu mặc định
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tên người nhận</label>
+        <input
+          type="text"
+          id="inp-receiver"
+          placeholder="NGUYEN VAN THANG"
+          value="NGUYEN VAN THANG"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Số tài khoản nhận</label>
+        <input
+          type="text"
+          id="inp-account"
+          placeholder="104002065167"
+          value="104002065167"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Nội dung chuyển tiền</label>
+        <textarea id="inp-content" placeholder="Nhập nội dung...">
+phong 404  so nha 3 ngo 134/44/3 Nguyen Xa. Pham Tien Manh</textarea
+        >
+      </div>
+
+      <button class="btn-generate" onclick="generate()">
+        ⚡ Tạo Bill Ngay
+      </button>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="preview-wrap">
+      <div class="preview-label">🧾 Preview Bill</div>
+      <div class="phone-frame">
+        <div class="phone-screen" id="bill-screen">
+          <!-- form state shown first -->
+          <div class="screen-form" id="screen-form">
+            <div
+              style="
+                padding: 40px 24px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 520px;
+                gap: 16px;
+              "
+            >
+              <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                <rect width="56" height="56" rx="16" fill="#EEF2FF" />
+                <path
+                  d="M14 28h28M28 14v28"
+                  stroke="#1A56DB"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  opacity="0.3"
+                />
+                <rect
+                  x="18"
+                  y="18"
+                  width="20"
+                  height="20"
+                  rx="6"
+                  stroke="#1A56DB"
+                  stroke-width="2"
+                />
+              </svg>
+              <div
+                style="
+                  font-size: 15px;
+                  font-weight: 700;
+                  color: #1a1a2e;
+                  text-align: center;
+                "
+              >
+                Điền thông tin & nhấn<br />⚡ Tạo Bill Ngay
+              </div>
+              <div style="font-size: 12px; color: #6b7280; text-align: center">
+                Bill sẽ hiện ra tại đây
+              </div>
+            </div>
+          </div>
+          <!-- bill result hidden initially -->
+          <div class="screen-bill" id="screen-bill"></div>
+        </div>
+      </div>
+      <button class="btn-save" onclick="saveBill()">💾 Lưu ảnh bill</button>
+    </div>
+
+    <script>
+      const BANK_LIST = [
+        { key: "MB", name: "MBBank (MB)", color: "#7B2FF7", short: "MB" },
+        {
+          key: "VCB",
+          name: "Vietcombank (VCB)",
+          color: "#007B40",
+          short: "VCB",
+        },
+        {
+          key: "TCB",
+          name: "Techcombank (TCB)",
+          color: "#C8161D",
+          short: "TCB",
+        },
+        { key: "BIDV", name: "BIDV", color: "#005BAA", short: "BIDV" },
+        {
+          key: "VTB",
+          name: "Vietinbank (CTG)",
+          color: "#B70000",
+          short: "CTG",
+        },
+        { key: "ACB", name: "ACB", color: "#003087", short: "ACB" },
+        { key: "TPB", name: "TPBank", color: "#8B0000", short: "TPB" },
+        { key: "MSB", name: "MSB", color: "#E30613", short: "MSB" },
+        { key: "VPB", name: "VPBank", color: "#006F3C", short: "VPB" },
+        { key: "SHB", name: "SHB", color: "#B22222", short: "SHB" },
+      ];
+
+      let customLogoDataUrl = null;
+
+      // ===== COMBO BOX SETUP =====
+      function setupCombo(inputId, dropdownId) {
+        const input = document.getElementById(inputId);
+        const dd = document.getElementById(dropdownId);
+
+        function renderOptions(filter) {
+          const lower = filter.toLowerCase();
+          const filtered = BANK_LIST.filter((b) =>
+            b.name.toLowerCase().includes(lower),
+          );
+          dd.innerHTML = filtered
+            .map(
+              (b) =>
+                `<div class="combo-option" data-name="${b.name}" onclick="selectCombo('${inputId}','${dropdownId}','${b.name}')">${b.name}</div>`,
+            )
+            .join("");
+        }
+
+        input.addEventListener("focus", () => {
+          renderOptions(input.value);
+          dd.classList.add("open");
+        });
+
+        input.addEventListener("input", () => {
+          renderOptions(input.value);
+          dd.classList.add("open");
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!input.parentElement.contains(e.target))
+            dd.classList.remove("open");
+        });
+
+        renderOptions("");
+      }
+
+      function selectCombo(inputId, dropdownId, name) {
+        document.getElementById(inputId).value = name;
+        document.getElementById(dropdownId).classList.remove("open");
+      }
+
+      setupCombo("inp-bank-from", "dd-bank-from");
+      setupCombo("inp-bank-to", "dd-bank-to");
+
+      // ===== LOGO UPLOAD =====
+      function handleLogoUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          customLogoDataUrl = e.target.result;
+          const box = document.getElementById("logo-preview-box");
+          box.innerHTML = `<img id="logo-preview-img" src="${customLogoDataUrl}"><span id="logo-upload-text" style="color:#1a1a2e;">Logo đã tải lên ✓</span>`;
+          document.getElementById("logo-clear-wrap").style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function clearLogo() {
+        customLogoDataUrl = null;
+        document.getElementById("inp-logo").value = "";
+        const box = document.getElementById("logo-preview-box");
+        box.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A56DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span id="logo-upload-text">Nhấn để tải logo ngân hàng</span>`;
+        document.getElementById("logo-clear-wrap").style.display = "none";
+      }
+
+      function formatAmount(val) {
+        let num = val.replace(/[^\d]/g, "");
+        if (!num) return "0";
+        return parseInt(num).toLocaleString("vi-VN");
+      }
+
+      // ===== GENERATE BILL =====
+      function generate() {
+        const time = document.getElementById("inp-time").value || "09:06";
+        const date = document.getElementById("inp-date").value || "31/05/2026";
+        const amount = formatAmount(
+          document.getElementById("inp-amount").value || "0",
+        );
+        const bankToName =
+          document.getElementById("inp-bank-to").value.trim() ||
+          "Ngân hàng nhận";
+        const receiver = (
+          document.getElementById("inp-receiver").value || "NGUYEN VAN A"
+        ).toUpperCase();
+        const account =
+          document.getElementById("inp-account").value || "000000000000";
+        const content = document.getElementById("inp-content").value || "";
+
+        // Match bank to get color/short — fallback to grey
+        const matched = BANK_LIST.find(
+          (b) => b.name.toLowerCase() === bankToName.toLowerCase(),
+        );
+        const bankColor = matched ? matched.color : "#888";
+        const bankShort = matched
+          ? matched.short
+          : bankToName.substring(0, 4).toUpperCase();
+
+        const bankLogoHtml = customLogoDataUrl
+          ? `<img src="${customLogoDataUrl}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;border:1.5px solid #eee;flex-shrink:0;">`
+          : `<div class="bank-logo-sm" style="background:${bankColor}">${bankShort}</div>`;
+
+        const billHtml = `
+    <div style="background:linear-gradient(160deg,#dde6ff 0%,#eef2ff 40%,#f0f8ff 100%);min-height:100%;padding-bottom:10px;">
+      <div class="bill-inner">
+        <div class="checkmark-wrap">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="ckGrad" x1="10" y1="20" x2="65" y2="65" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#48CAE4"/><stop offset="1" stop-color="#1A56DB"/>
+              </linearGradient>
+            </defs>
+            <path d="M12 42 L33 63 L68 22" stroke="url(#ckGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <div class="bill-title">Chuyển tiền thành công</div>
+        <div class="bill-amount">${amount} VND</div>
+        <div class="bill-time">${time} - ${date}</div>
+        <div class="chevron-down">
+          <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><path d="M1 1L9 9L17 1" stroke="#1A56DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><path d="M1 1L9 9L17 1" stroke="#1A56DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/></svg>
+        </div>
+
+        <div class="recipient-card">
+          <div class="recipient-name">${receiver}</div>
+          <div class="bank-row">
+            ${bankLogoHtml}
+            <span class="bank-name-text">${bankToName}</span>
+          </div>
+          <div class="account-no">${account}</div>
+          ${content ? `<div class="bill-content-text">${content}</div>` : ""}
+        </div>
+
+        <div class="expand-btn">
+          <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+
+        <div class="thankyou-text">Cảm ơn bạn đã sử dụng dịch vụ của MBBank</div>
+
+        <div class="mb-logo">
+          <img src="Logo-MB-Bank-MBB.webp" style="height:36px;width:auto;object-fit:contain;">
+        </div>
+
+        <div class="action-row">
+          <div class="action-item">
+            <div class="action-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </div>
+            <span class="action-label">Chia sẻ</span>
+          </div>
+          <div class="action-item">
+            <div class="action-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <span class="action-label">Lưu ảnh</span>
+          </div>
+          <div class="action-item">
+            <div class="action-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <span class="action-label">Lưu mẫu</span>
+          </div>
+        </div>
+
+        <div class="btn-other" onclick="goBack()">Thực hiện giao dịch khác</div>
+      </div>
+    </div>
+  `;
+
+        // Switch screens
+        document.getElementById("screen-form").style.display = "none";
+        document.getElementById("screen-bill").style.display = "block";
+        document.getElementById("screen-bill").innerHTML = billHtml;
+      }
+
+      function goBack() {
+        document.getElementById("screen-bill").style.display = "none";
+        document.getElementById("screen-form").style.display = "block";
+      }
+
+      function saveBill() {
+        alert(
+          "💡 Tip: Dùng Snipping Tool (Windows) hoặc Cmd+Shift+4 (Mac) để chụp bill nhé!",
+        );
+      }
+    </script>
+  </body>
+</html>
